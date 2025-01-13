@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yhden Sivun Verkkosivu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: #333;
+            color: white;
+            padding: 0.5rem 0;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+        }
+
+        nav a:hover {
+            background: #4CAF50;
+            border-radius: 5px;
+        }
+
+        section {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        #about {
+            background: #f4f4f4;
+        }
+
+        #services {
+            background: #ddd;
+        }
+
+        #contact {
+            background: #ccc;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tervetuloa Verkkosivullemme</h1>
+    </header>
+    <nav>
+        <a href="#about">Tietoa</a>
+        <a href="#services">Palvelut</a>
+        <a href="#contact">Yhteystiedot</a>
+    </nav>
+    <section id="about">
+        <h2>Tietoa</h2>
+        <p>Tämä on yksinkertainen yhden sivun verkkosivu.</p>
+    </section>
+    <section id="services">
+        <h2>Palvelut</h2>
+        <p>Tarjoamme erilaisia palveluita, kuten verkkosivujen suunnittelua.</p>
+    </section>
+    <section id="contact">
+        <h2>Yhteystiedot</h2>
+        <p>Ota yhteyttä: sähköposti@domain.fi</p>
+        <button id="contactButton">Lähetä viesti</button>
+    </section>
+    <footer>
+        <p>&copy; 2025 Verkkosivu Oy</p>
+    </footer>
+    <script>
+        document.getElementById('contactButton').addEventListener('click', function() {
+            alert('Kiitos yhteydenotosta!');
+        });
+    </script>
+</body>
+</html>
