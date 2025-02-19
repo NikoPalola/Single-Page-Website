@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD-operaatiot</title>
+    <script>
+        async function createUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const response = await fetch('/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            alert(`Käyttäjä luotu: ${data.id}`);
+        }
+
+        async function readUsers() {
+            const response = await fetch('/users');
+            const users = await response.json();
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `${user.id}: ${user.name} (${user.email})`;
+                userList.appendChild(li);
+            });
+        }
+
+        async function updateUser() {
+            const id = document.getElementById('updateId').value;
+            const name = document.getElementById('updateName').value;
+            const email = document.getElementById('updateEmail').value;
+            const response = await fetch(`/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            alert(data.message);
+        }
+
+        async function deleteUser() {
+            const id = document.getElementById('deleteId').value;
+            const response = await fetch(`/users/${id}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            alert(data.message);
+        }
+    </script>
+</head>
+<body>
+    <h1>CRUD-operaatiot</h1>
+
+    <h2>Luo käyttäjä</h2>
+    <input type="text" id="name" placeholder="Nimi">
+    <input type="email" id="email" placeholder="Sähköposti">
+    <button onclick="createUser()">Luo</button>
+
+    <h2>Hae käyttäjät</h2>
+    <button onclick="readUsers()">Hae</button>
+    <ul id="userList"></ul>
+
+    <h2>Päivitä käyttäjä</h2>
+    <input type="text" id="updateId" placeholder="Käyttäjän ID">
+    <input type="text" id="updateName" placeholder="Nimi">
+    <input type="email" id="updateEmail" placeholder="Sähköposti">
+    <button onclick="updateUser()">Päivitä</button>
+
+    <h2>Poista käyttäjä</h2>
+    <input type="text" id="deleteId" placeholder="Käyttäjän ID">
+    <button onclick="deleteUser()">Poista</button>
+</body>
+</html>
