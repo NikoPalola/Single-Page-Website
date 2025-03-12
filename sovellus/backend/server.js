@@ -1,95 +1,108 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path'); // Lisää tämä rivi
+const { Sequelize, DataTypes } = require('sequelize');
+const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-// Käytetään JSON-middlewarea POST-datan käsittelyyn
+app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Palvele index.html-tiedosto
-app.use(express.static(path.join(__dirname, 'public'))); // Lisää tämä rivi
+// Connect to a SQLite database using Sequelize
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './new.db',
+    logging: true // Print SQL commands
+});
 
-// Yhdistä SQLite-tietokantaan
-const db = new sqlite3.Database('./database.db', (err) => {
-    if (err) {
-        console.error('Tietokantavirhe:', err.message);
-    } else {
-        console.log('Yhteys SQLite-tietokantaan onnistui.');
+// Define User model
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
+}, {
+    timestamps: false
+});
+
+// Synchronize database
+sequelize.sync()
+    .then(() => console.log("Database synchronized"))
+    .catch(err => console.error("Error synchronizing database:", err));
+
+// Create a new user (Create)
+app.post('/users', async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        if (!name || !email) {
+            return res.status(400).json({ error: 'Name and email are required' });
+        }
+        const user = await User.create({ name, email });
+        res.status(201).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
-// Luo taulu, jos sitä ei ole olemassa
-db.run(`CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  email TEXT UNIQUE
-)`);
-
-// Luo uusi käyttäjä (Create)
-app.post('/users', (req, res) => {
-    const { name, email } = req.body;
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Nimi ja sähköposti vaaditaan' });
+// Search all users (Read)
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    const query = `INSERT INTO users (name, email) VALUES (?, ?)`;
-    db.run(query, [name, email], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(201).json({ id: this.lastID, name, email });
-    });
 });
 
-// Hae kaikki käyttäjät (Read)
-app.get('/users', (req, res) => {
-    db.all('SELECT * FROM users', [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
+// Update user information (Update)
+app.put('/users/:id', async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const { id } = req.params;
+        if (!name || !email) {
+            return res.status(400).json({ error: 'Name and email are required' });
         }
-        res.json(rows);
-    });
-});
-
-// Päivitä käyttäjän tiedot (Update)
-app.put('/users/:id', (req, res) => {
-    const { name, email } = req.body;
-    const { id } = req.params;
-
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Nimi ja sähköposti vaaditaan' });
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        user.name = name;
+        user.email = email;
+        await user.save();
+        res.json({ message: 'User information updated', user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    const query = `UPDATE users SET name = ?, email = ? WHERE id = ?`;
-    db.run(query, [name, email, id], function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (this.changes === 0) {
-            return res.status(404).json({ error: 'Käyttäjää ei löytynyt' });
-        }
-        res.json({ message: 'Käyttäjän tiedot päivitetty', id });
-    });
 });
 
-// Poista käyttäjä (Delete)
-app.delete('/users/:id', (req, res) => {
-    const { id } = req.params;
-
-    db.run(`DELETE FROM users WHERE id = ?`, id, function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
+// Delete user (Delete)
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
         }
-        if (this.changes === 0) {
-            return res.status(404).json({ error: 'Käyttäjää ei löytynyt' });
-        }
-        res.json({ message: 'Käyttäjä poistettu', id });
-    });
+        await user.destroy();
+        res.json({ message: 'User deleted', id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// Käynnistä palvelin
+// Start the server
 app.listen(port, () => {
-    console.log(`Palvelin käynnissä osoitteessa http://localhost:${port}`);
+    console.log(`Server running at http://localhost:${port}`);
 });
