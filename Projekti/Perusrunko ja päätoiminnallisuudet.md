@@ -1,39 +1,39 @@
-# Project phase 2 - Basic structure and main functionalities
+# Projekti vaihe 2 - Perusrakenne ja päätoiminnot
 
 Add something
 
-## 1. Environment
+## 1. Ympäristö
 
 Add something
 
-## 2. Backend
+## 2. Taustajärjestelmä
 
 Add something
 
-## 3. Frontend
+## 3. Käyttöliittymä
 
 Add something
 
-## 4. Database
+## 4. Tietokanta
 
 Add something
 
-## 5. Basic structure and architecture
+## 5. Perusrunko ja arkkitehtuuri
 
 Add something
 
-## 6. Functionalities
+## 6. Toiminnot
 
 Add something
 
-## 7. Code quality and documentation
+## 7. Koodin laatu ja dokumentaatio
 
 Add something
 
-## 8. Testing and error handling
+## 8. Testaaminen
 
 Add something
 
-## 9. User interface and interaction
+## 9. Käyttäjä näkymä ja käytettävyys
 
 Add something
