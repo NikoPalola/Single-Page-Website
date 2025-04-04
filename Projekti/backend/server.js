@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = 5173;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -30,6 +30,7 @@ const Car = sequelize.define('Car', {
     brand: { type: DataTypes.STRING, allowNull: false },
     model: { type: DataTypes.STRING, allowNull: false },
     year: { type: DataTypes.INTEGER, allowNull: false },
+    kilometers: { type: DataTypes.INTEGER, allowNull: false },
     price: { type: DataTypes.FLOAT, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: true },
     sellerId: { type: DataTypes.INTEGER, allowNull: false }
@@ -95,16 +96,17 @@ app.delete('/users/:id', async (req, res) => {
 // ** Autoreitit **
 app.post('/cars', async (req, res) => {
     try {
-        const { brand, model, year, price, description, sellerId } = req.body;
+        const { brand, model, year, kilometers, price, description, sellerId } = req.body;
         if (!brand || !model || !year || !price || !sellerId) {
             return res.status(400).json({ error: 'Kaikki tiedot ovat pakollisia' });
         }
-        const car = await Car.create({ brand, model, year, price, description, sellerId });
+        const car = await Car.create({ brand, model, year, kilometers, price, description, sellerId });
         res.status(201).json(car);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 app.get('/cars', async (req, res) => {
     try {
@@ -128,16 +130,27 @@ app.get('/cars/:id', async (req, res) => {
 
 app.put('/cars/:id', async (req, res) => {
     try {
-        const { brand, model, year, price, description } = req.body;
+        const { brand, model, year, kilometers, price, description, sellerId } = req.body;
         const { id } = req.params;
+
+        // Haetaan auto tietokannasta
         const car = await Car.findByPk(id);
         if (!car) return res.status(404).json({ error: 'Autoa ei löytynyt' });
+
+        // Tarkistetaan, onko käyttäjä auton omistaja
+        if (car.sellerId !== sellerId) {
+            return res.status(403).json({ error: 'Ei oikeuksia muokata tätä autoa' });
+        }
+
+        // Päivitetään auton tiedot
         car.brand = brand;
         car.model = model;
         car.year = year;
+        car.kilometers = kilometers;
         car.price = price;
         car.description = description;
         await car.save();
+
         res.json({ message: 'Auton tiedot päivitetty', car });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -147,8 +160,18 @@ app.put('/cars/:id', async (req, res) => {
 app.delete('/cars/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        const { sellerId } = req.body; // Saadaan käyttäjän ID pyynnöstä
+
+        // Haetaan auto tietokannasta
         const car = await Car.findByPk(id);
         if (!car) return res.status(404).json({ error: 'Autoa ei löytynyt' });
+
+        // Tarkistetaan, onko käyttäjä auton myyjä
+        if (car.sellerId !== sellerId) {
+            return res.status(403).json({ error: 'Ei oikeuksia poistaa tätä autoa' });
+        }
+
+        // Poistetaan auto
         await car.destroy();
         res.json({ message: 'Auto poistettu', id });
     } catch (err) {

@@ -13,7 +13,7 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
         setMessage("");
 
         try {
-            const response = await axios.put(`http://localhost:5173/users/${id}`, {
+            const response = await axios.put(`http://localhost:3000/users/${id}`, {
                 name,
                 email,
             });
@@ -33,7 +33,7 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
             <form onSubmit={handleUpdate} className="update-user-form">
                 <input
                     type="text"
-                    placeholder="Käyttäjätunnus"
+                    placeholder="Käyttäjänimi"
                     value={id}
                     onChange={(e) => setId(e.target.value)}
                     required

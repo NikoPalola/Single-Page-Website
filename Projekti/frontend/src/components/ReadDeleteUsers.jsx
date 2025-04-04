@@ -8,7 +8,7 @@ export default function ReadDeleteUsers({ refresh, buttonClass = "btn btn-danger
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get("http://localhost:5173/users");
+            const response = await axios.get("http://localhost:3000/users");
             setUsers(response.data);
         } catch (err) {
             setError("Error fetching users: " + (err.response?.data?.error || err.message));
@@ -21,7 +21,7 @@ export default function ReadDeleteUsers({ refresh, buttonClass = "btn btn-danger
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5173/users/${id}`);
+            await axios.delete(`http://localhost:3000/users/${id}`);
             fetchUsers();
             setMessage(`User with ID ${id} deleted successfully.`);
         } catch (error) {
