@@ -1,4 +1,5 @@
 import { useState } from "react";
+import '../index.css';
 
 function CreateCar({ onCarAdded, buttonClass }) {
   const [brand, setBrand] = useState("");
@@ -27,12 +28,12 @@ function CreateCar({ onCarAdded, buttonClass }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="Brand" value={brand} onChange={(e) => setBrand(e.target.value)} className="form-control mb-2" required />
-      <input type="text" placeholder="Model" value={model} onChange={(e) => setModel(e.target.value)} className="form-control mb-2" required />
-      <input type="number" placeholder="Year" value={year} onChange={(e) => setYear(e.target.value)} className="form-control mb-2" required />
-      <input type="number" placeholder="Price (€)" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
-      <input type="number" placeholder="Seller ID" value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-control mb-2" required />
-      <button type="submit" className={buttonClass}>Add Car</button>
+      <input type="text" placeholder="Merkki" value={brand} onChange={(e) => setBrand(e.target.value)} className="form-control mb-2" required />
+      <input type="text" placeholder="Malli" value={model} onChange={(e) => setModel(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Vuosimalli" value={year} onChange={(e) => setYear(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Hinta (€)" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Myynti ID" value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-control mb-2" required />
+      <button type="submit" className={buttonClass}>Laita myyntiin</button>
     </form>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import '../index.css';
 
 export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warning" }) {
     const [id, setId] = useState("");
@@ -27,22 +28,24 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
     };
 
     return (
-        <div>
-            <h2>Update User</h2>
-            <form onSubmit={handleUpdate}>
+        <div className="update-user-container">
+            <h2>Käyttäjätietojen päivitys</h2>
+            <form onSubmit={handleUpdate} className="update-user-form">
                 <input
                     type="text"
-                    placeholder="User ID"
+                    placeholder="Käyttäjätunnus"
                     value={id}
                     onChange={(e) => setId(e.target.value)}
                     required
+                    className="input-field"
                 />
                 <input
                     type="text"
-                    placeholder="Name"
+                    placeholder="Nimi"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
+                    className="input-field"
                 />
                 <input
                     type="email"
@@ -50,10 +53,11 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="input-field"
                 />
-                <button type="submit" className={buttonClass}>Update</button>
+                <button type="submit" className={buttonClass}>Päivitä</button>
             </form>
-            {message && <p>{message}</p>}
+            {message &&  <p className="message">{message}</p>}
         </div>
     );
 }

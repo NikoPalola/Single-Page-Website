@@ -26,11 +26,18 @@ export default function CreateUser({ onUserAdded, buttonClass = "btn btn-primary
 
   return (
     <div>
-      <h2>Create User</h2>
+      <h2>Luo käyttäjä</h2>
       <form onSubmit={handleSubmit}>
+      <input
+          type="text"
+          placeholder="Käyttäjänimi"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Nimi"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -42,7 +49,7 @@ export default function CreateUser({ onUserAdded, buttonClass = "btn btn-primary
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button type="submit" className={buttonClass}>Create</button>
+        <button type="submit" className={buttonClass}>Luo uusi käyttäjä</button>
       </form>
       {message && <p>{message}</p>}
     </div>

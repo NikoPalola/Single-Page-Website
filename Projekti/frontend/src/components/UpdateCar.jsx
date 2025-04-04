@@ -1,4 +1,5 @@
 import { useState } from "react";
+import '../index.css';
 
 function UpdateCar({ onCarUpdated, buttonClass }) {
   const [id, setId] = useState("");
@@ -15,9 +16,12 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
 
   return (
     <div>
-      <input type="number" placeholder="Car ID" value={id} onChange={(e) => setId(e.target.value)} className="form-control mb-2" required />
-      <input type="number" placeholder="New Price (€)" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
-      <button onClick={handleUpdate} className={buttonClass}>Update</button>
+      <input type="number" placeholder="Myynti ID" value={id} onChange={(e) => setId(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Merkki" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Malli" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Vuosimalli" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
+      <input type="number" placeholder="Hinta (€)" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control mb-2" required />
+      <button onClick={handleUpdate} className={buttonClass}>Päivitä</button>
     </div>
   );
 }

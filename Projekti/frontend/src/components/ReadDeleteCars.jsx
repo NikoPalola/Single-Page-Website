@@ -19,7 +19,7 @@ function ReadDeleteCars({ refresh, buttonClass }) {
       {cars.map(car => (
         <div key={car.id} className="d-flex justify-content-between align-items-center border p-2 mb-2">
           <span>{car.brand} {car.model} ({car.year}) - {car.price}€</span>
-          <button onClick={() => handleDelete(car.id)} className={buttonClass}>Delete</button>
+          <button onClick={() => handleDelete(car.id)} className={buttonClass}>Poista myynnistä</button>
         </div>
       ))}
     </div>

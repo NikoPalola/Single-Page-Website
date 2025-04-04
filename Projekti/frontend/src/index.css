@@ -4,8 +4,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #d4af37; /* Kultainen teksti */
+  background-color: #333333; /* Tummanharmaa tausta */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #d4af37; /* Kultainen linkki */
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #ffcc00; /* Vaaleampi kultainen hover-tila */
 }
 
 body {
@@ -28,11 +28,17 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #333333; /* Taustaväri */
+  color: #d4af37; /* Tekstiväri */
+  flex-direction: column;
+  padding: 1rem;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: #d4af37; /* Kultainen otsikko */
+  margin-bottom: 1rem;
 }
 
 button {
@@ -42,13 +48,17 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #444444; /* Tummanharmaa nappi */
+  color: #d4af37; /* Kultainen teksti napissa */
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.25s;
 }
+
 button:hover {
-  border-color: #646cff;
+  border-color: #d4af37; /* Kultainen reuna hover-tilassa */
+  background-color: #555555; /* Tummempi tausta hover-tilassa */
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -56,13 +66,39 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #d4af37; /* Kultainen teksti */
+    background-color: #f1f1f1; /* Vaaleanharmaa tausta */
   }
   a:hover {
-    color: #747bff;
+    color: #ffcc00; /* Vaaleampi kultainen hover-tila */
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* Vaalea tausta napille */
+    color: #333333; /* Tumma teksti napissa vaaleassa tilassa */
+  }
+  button:hover {
+    background-color: #e0e0e0; /* Vaaleampi tausta hover-tilassa */
+  }
+}
+
+/* Responsiivisuus: skaalautuu pienille laitteille */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5em; /* Pienempi otsikko pienemmillä laitteilla */
+  }
+
+  button {
+    font-size: 0.9em;
+    padding: 0.5em 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2em; /* Vielä pienempi otsikko pienimmillä laitteilla */
+  }
+
+  body {
+    padding: 0.5rem;
   }
 }

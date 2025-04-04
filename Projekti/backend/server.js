@@ -1,18 +1,21 @@
-// Tietokantayhteys PostgreSQL:llä (Google Cloud SQL)
-const sequelize = new Sequelize({
-    dialect: 'postgres',
-    host: process.env.DB_HOST || 'localhost',  // Ympäristömuuttuja Google Cloudissa
-    username: process.env.DB_USER || 'your-database-user',
-    password: process.env.DB_PASS || 'your-database-password',
-    database: process.env.DB_NAME || 'your-database-name',
-    dialectOptions: {
-        ssl: {
-            require: true, 
-            rejectUnauthorized: false  // SSL yhteys vaaditaan Google Cloud SQL:lle
-        }
-    }
-});
+const express = require('express');
+const { Sequelize, DataTypes } = require('sequelize');
+const path = require('path');
+const cors = require('cors');
 
+const app = express();
+const port = 5173;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Tietokantayhteys SQLite:llä
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './Tietokanta.db',
+    logging: true // Näyttää SQL-komennot konsolissa
+});
 
 // Käyttäjätaulu
 const User = sequelize.define('User', {
@@ -153,7 +156,7 @@ app.delete('/cars/:id', async (req, res) => {
     }
 });
 
-const port = process.env.PORT || 8080;  // Käytetään dynaamista porttia
+// Käynnistetään palvelin
 app.listen(port, () => {
     console.log(`Palvelin käynnissä osoitteessa http://localhost:${port}`);
 });
