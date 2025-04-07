@@ -1,14 +1,14 @@
 # Projekti vaihe 2 - Perusrakenne ja päätoiminnot
 
-Add something
+Tässä dokumentissä on sovelluksen perurakenne ja päätoiminnot.
 
 ## 1. Ympäristö
 
-Add something
+Ympäristö on toteutettu paikallisesti. Localhost(port)
 
 ## 2. Taustajärjestelmä
 
-Add something
+Taustajärjestelmä on paikallisesti java scriptillä toteutettu. 
 
 ## 3. Käyttöliittymä
 
@@ -16,7 +16,7 @@ Add something
 
 ## 4. Tietokanta
 
-Add something
+Tietokantana on SQLite
 
 ## 5. Perusrunko ja arkkitehtuuri
 
