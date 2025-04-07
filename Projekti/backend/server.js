@@ -2,6 +2,7 @@ const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = 3000;
@@ -21,7 +22,9 @@ const sequelize = new Sequelize({
 const User = sequelize.define('User', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     name: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false, unique: true }
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    username: { type: DataTypes.STRING, allowNull: false, unique: true },
+    password: { type: DataTypes.STRING, allowNull: false }
 }, { timestamps: false });
 
 // Autotaulu
@@ -48,14 +51,41 @@ sequelize.sync()
 // ** Käyttäjäreitit **
 app.post('/users', async (req, res) => {
     try {
-        const { name, email } = req.body;
-        if (!name || !email) return res.status(400).json({ error: 'Nimi ja sähköposti vaaditaan' });
-        const user = await User.create({ name, email });
+        const { name, email, username, password } = req.body;
+        if (!name || !email || !username || !password) return res.status(400).json({ error: 'Nimi, sähköposti, käyttäjätunnus ja salasana vaaditaan' });
+
+        // Salataan salasana
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({ name, email, username, password: hashedPassword });
         res.status(201).json(user);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
+// Kirjautumisreitti
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ where: { username } });
+
+        if (!user) {
+            return res.status(401).json({ error: 'Käyttäjätunnusta ei löytynyt' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Virheellinen salasana' });
+        }
+
+        res.json({ id: user.id, name: user.name, email: user.email });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 app.get('/users', async (req, res) => {
     try {
@@ -68,12 +98,17 @@ app.get('/users', async (req, res) => {
 
 app.put('/users/:id', async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, username, password } = req.body;
         const { id } = req.params;
         const user = await User.findByPk(id);
         if (!user) return res.status(404).json({ error: 'Käyttäjää ei löytynyt' });
+
         user.name = name;
         user.email = email;
+        user.username = username;
+        if (password) {
+            user.password = await bcrypt.hash(password, 10);
+        }
         await user.save();
         res.json({ message: 'Käyttäjätiedot päivitetty', user });
     } catch (err) {
@@ -97,7 +132,7 @@ app.delete('/users/:id', async (req, res) => {
 app.post('/cars', async (req, res) => {
     try {
         const { brand, model, year, kilometers, price, description, sellerId } = req.body;
-        if (!brand || !model || !year || !price || !sellerId) {
+        if (!brand || !model || !year || !kilometers || !price || !sellerId) {
             return res.status(400).json({ error: 'Kaikki tiedot ovat pakollisia' });
         }
         const car = await Car.create({ brand, model, year, kilometers, price, description, sellerId });
@@ -106,7 +141,6 @@ app.post('/cars', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
 
 app.get('/cars', async (req, res) => {
     try {

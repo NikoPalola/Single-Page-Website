@@ -9,6 +9,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
   const [year, setYear] = useState("");
   const [kilometers, setKilometers] = useState("");
   const [price, setPrice] = useState("");
+  const [sellerId, setSellerId] = useState("");
   const [message, setMessage] = useState("");
 
   // Hakee auton tiedot myynti-ID:n perusteella
@@ -25,6 +26,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
       setYear(car.year);
       setKilometers(car.kilometers);
       setPrice(car.price);
+      setSellerId(car.sellerId);
       setMessage("");
     } catch (error) {
       setMessage("Virhe haettaessa tietoja.");
@@ -37,7 +39,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
       const response = await fetch(`http://localhost:3000/cars/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brand, model, year, kilometers, price }),
+        body: JSON.stringify({ brand, model, year, kilometers, price, sellerId }),
       });
 
       if (response.ok) {
@@ -56,6 +58,8 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
     try {
       const response = await fetch(`http://localhost:3000/cars/${id}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sellerId }),
       });
 
       if (response.ok) {
@@ -66,6 +70,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
         setYear("");
         setKilometers("");
         setPrice("");
+        setSellerId("");
         onCarUpdated();
       } else {
         setMessage("Poisto epäonnistui.");
@@ -78,55 +83,63 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
   return (
     <div>
       <h2>Päivitä tai poista auto</h2>
-      <input 
-        type="number" 
-        placeholder="Myynti ID" 
-        value={id} 
-        onChange={(e) => setId(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="number"
+        placeholder="Myynti ID"
+        value={id}
+        onChange={(e) => setId(e.target.value)}
+        className="form-control mb-2"
+        required
       />
       <button onClick={fetchCarDetails} className="btn btn-info mb-3">Hae tiedot</button>
 
-      <input 
-        type="text" 
-        placeholder="Merkki" 
-        value={brand} 
-        onChange={(e) => setBrand(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="text"
+        placeholder="Merkki"
+        value={brand}
+        onChange={(e) => setBrand(e.target.value)}
+        className="form-control mb-2"
+        required
       />
-      <input 
-        type="text" 
-        placeholder="Malli" 
-        value={model} 
-        onChange={(e) => setModel(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="text"
+        placeholder="Malli"
+        value={model}
+        onChange={(e) => setModel(e.target.value)}
+        className="form-control mb-2"
+        required
       />
-      <input 
-        type="number" 
-        placeholder="Vuosimalli" 
-        value={year} 
-        onChange={(e) => setYear(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="number"
+        placeholder="Vuosimalli"
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+        className="form-control mb-2"
+        required
       />
-      <input 
-        type="number" 
-        placeholder="Kilometrit" 
-        value={kilometers} 
-        onChange={(e) => setKilometers(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="number"
+        placeholder="Kilometrit"
+        value={kilometers}
+        onChange={(e) => setKilometers(e.target.value)}
+        className="form-control mb-2"
+        required
       />
-      <input 
-        type="number" 
-        placeholder="Hinta (€)" 
-        value={price} 
-        onChange={(e) => setPrice(e.target.value)} 
-        className="form-control mb-2" 
-        required 
+      <input
+        type="number"
+        placeholder="Hinta (€)"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        className="form-control mb-2"
+        required
+      />
+      <input
+        type="number"
+        placeholder="Myyjän ID"
+        value={sellerId}
+        onChange={(e) => setSellerId(e.target.value)}
+        className="form-control mb-3"
+        required
       />
 
       <button onClick={handleUpdate} className={`${buttonClass} me-2`}>Päivitä</button>

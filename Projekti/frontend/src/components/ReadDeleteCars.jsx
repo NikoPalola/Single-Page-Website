@@ -10,9 +10,8 @@ function ReadDeleteCars({ refresh }) {
       .then((data) => setCars(data));
   }, [refresh]);
 
-  const handleDelete = async (id) => {
-    await fetch(`http://localhost:3000/cars/${id}`, { method: "DELETE" });
-    setCars(cars.filter((car) => car.id !== id));
+  {
+   
   };
 
   return (

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "react-router-dom": "^7.4.1",

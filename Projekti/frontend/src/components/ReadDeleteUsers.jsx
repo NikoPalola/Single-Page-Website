@@ -6,15 +6,6 @@ export default function ReadDeleteUsers({ refresh, buttonClass = "btn btn-danger
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
 
-    const fetchUsers = async () => {
-        try {
-            const response = await axios.get("http://localhost:3000/users");
-            setUsers(response.data);
-        } catch (err) {
-            setError("Error fetching users: " + (err.response?.data?.error || err.message));
-        }
-    };
-
     useEffect(() => {
         fetchUsers();
     }, [refresh]);

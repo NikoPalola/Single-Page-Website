@@ -5,6 +5,7 @@ import "../index.css"; // Tuo tyylitiedosto
 export default function CreateUser({ onUserAdded, buttonClass = "btn btn-primary" }) {
   const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
@@ -16,9 +17,12 @@ export default function CreateUser({ onUserAdded, buttonClass = "btn btn-primary
       const response = await axios.post("http://localhost:3000/users", {
         name,
         email,
+        username: userName,
+        password
       });
-      setMessage("User created successfully: " + response.data.name);
+      setMessage("Käyttäjä tehty!: " + response.data.name);
       setUserName("");
+      setPassword("");
       setName("");
       setEmail("");
       if (onUserAdded) onUserAdded(); // Kutsutaan päivitysfunktiota
@@ -31,15 +35,22 @@ export default function CreateUser({ onUserAdded, buttonClass = "btn btn-primary
     <div>
       <h2>Luo käyttäjä</h2>
       <form onSubmit={handleSubmit}>
-      <input
-          type="username"
+        <input
+          type="text"
           placeholder="Käyttäjänimi"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           required
         />
         <input
-          type="name"
+          type="password"
+          placeholder="Salasana"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="text"
           placeholder="Nimi"
           value={name}
           onChange={(e) => setName(e.target.value)}

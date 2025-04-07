@@ -27,6 +27,31 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
         }
     };
 
+    const handleDelete = async () => {
+        const confirmed = window.confirm("Haluatko varmasti poistaa käyttäjätilisi?");
+        if (!confirmed) return;
+
+        try {
+            const userId = localStorage.getItem("userId");
+
+            const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                setMessage("Käyttäjä poistettu.");
+                localStorage.removeItem("userId"); // kirjataan ulos
+                // esim. ohjataan etusivulle tai login-sivulle
+                window.location.href = "/login";
+            } else {
+                setMessage("Poistaminen epäonnistui.");
+            }
+        } catch (error) {
+            setMessage("Virhe poistettaessa käyttäjää.");
+        }
+    };
+
+
     return (
         <div className="update-user-container">
             <h2>Käyttäjätietojen päivitys</h2>
@@ -56,8 +81,12 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
                     className="input-field"
                 />
                 <button type="submit" className={buttonClass}>Päivitä</button>
+                <button onClick={handleDelete} className="btn btn-danger mt-3">
+                    Poista käyttäjätili
+                </button>
+
             </form>
-            {message &&  <p className="message">{message}</p>}
+            {message && <p className="message">{message}</p>}
         </div>
     );
 }
