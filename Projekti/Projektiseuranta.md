@@ -6,3 +6,4 @@
 | 4.4.2025 | 3 |  Sovelluksen jatkaminen |  backendin,frontendin ja tyylien teko. Sekä yritys saada pilviympäristö käyttöön, mutta huonolla menestyksellä. |
 | 4.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen kehitys, käyttöliittymä, tietokannan kehitys ja ominaisuuksien lisääminen ja parantelu. |
 | 7.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen toiminnallisuuksien ja kirjautumisen tekoa. |
+| 8.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen käyttäjä ongelmien korjaamista. |
