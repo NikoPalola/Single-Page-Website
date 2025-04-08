@@ -3,6 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
@@ -15,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './Tietokanta.db',
-    logging: true // Näyttää SQL-komennot konsolissa
+    logging: true
 });
 
 // Käyttäjätaulu
@@ -39,7 +40,7 @@ const Car = sequelize.define('Car', {
     sellerId: { type: DataTypes.INTEGER, allowNull: false }
 }, { timestamps: true });
 
-// Määritetään suhde käyttäjän ja auton välillä (käyttäjä voi lisätä autoja myyntiin)
+// Määritetään suhde käyttäjän ja auton välillä
 User.hasMany(Car, { foreignKey: 'sellerId', onDelete: 'CASCADE' });
 Car.belongsTo(User, { foreignKey: 'sellerId' });
 
@@ -49,20 +50,6 @@ sequelize.sync()
     .catch(err => console.error("Virhe tietokannan synkronoinnissa:", err));
 
 // ** Käyttäjäreitit **
-app.post('/users', async (req, res) => {
-    try {
-        const { name, email, username, password } = req.body;
-        if (!name || !email || !username || !password) return res.status(400).json({ error: 'Nimi, sähköposti, käyttäjätunnus ja salasana vaaditaan' });
-
-        // Salataan salasana
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await User.create({ name, email, username, password: hashedPassword });
-        res.status(201).json(user);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 // Kirjautumisreitti
 app.post('/login', async (req, res) => {
@@ -80,136 +67,68 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Virheellinen salasana' });
         }
 
-        res.json({ id: user.id, name: user.name, email: user.email });
+        // Luodaan JWT-tunnus ja lähetetään se käyttäjälle
+        const token = jwt.sign({ id: user.id, username: user.username }, 'salainenavain', { expiresIn: '1h' });
+
+        res.json({ token });  // Lähetetään token
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
+// Middleware tarkistaa JWT-tunnuksen ja liittää käyttäjän tiedot pyyntöön
+const authenticateJWT = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
 
-app.get('/users', async (req, res) => {
-    try {
-        const users = await User.findAll();
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    if (!token) {
+        return res.status(403).send("Access denied.");
     }
-});
 
-app.put('/users/:id', async (req, res) => {
-    try {
-        const { name, email, username, password } = req.body;
-        const { id } = req.params;
-        const user = await User.findByPk(id);
-        if (!user) return res.status(404).json({ error: 'Käyttäjää ei löytynyt' });
-
-        user.name = name;
-        user.email = email;
-        user.username = username;
-        if (password) {
-            user.password = await bcrypt.hash(password, 10);
+    jwt.verify(token, 'salainenavain', (err, user) => {
+        if (err) {
+            return res.status(403).send("Invalid token.");
         }
-        await user.save();
-        res.json({ message: 'Käyttäjätiedot päivitetty', user });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.delete('/users/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = await User.findByPk(id);
-        if (!user) return res.status(404).json({ error: 'Käyttäjää ei löytynyt' });
-        await user.destroy();
-        res.json({ message: 'Käyttäjä poistettu', id });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+        req.user = user;
+        next();
+    });
+};
 
 // ** Autoreitit **
-app.post('/cars', async (req, res) => {
-    try {
-        const { brand, model, year, kilometers, price, description, sellerId } = req.body;
-        if (!brand || !model || !year || !kilometers || !price || !sellerId) {
-            return res.status(400).json({ error: 'Kaikki tiedot ovat pakollisia' });
-        }
-        const car = await Car.create({ brand, model, year, kilometers, price, description, sellerId });
-        res.status(201).json(car);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+
+app.post("/cars", authenticateJWT, async (req, res) => {
+    const { brand, model, year, kilometers, price, description } = req.body;
+
+    if (!brand || !model || !year || !kilometers || !price) {
+        return res.status(400).json({ error: "Kaikki kentät ovat pakollisia" });
     }
-});
 
-app.get('/cars', async (req, res) => {
     try {
-        const cars = await Car.findAll({ include: User });
-        res.json(cars);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+        const sellerId = req.user.id; // Käytetään JWT:stä saatu käyttäjän ID
 
-app.get('/cars/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const car = await Car.findByPk(id, { include: User });
-        if (!car) return res.status(404).json({ error: 'Autoa ei löytynyt' });
-        res.json(car);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+        // Tarkistetaan, että arvot ovat kelvollisia numeroita
+        const yearNum = parseInt(year);
+        const kilometersNum = parseInt(kilometers);
+        const priceNum = parseFloat(price);
 
-app.put('/cars/:id', async (req, res) => {
-    try {
-        const { brand, model, year, kilometers, price, description, sellerId } = req.body;
-        const { id } = req.params;
-
-        // Haetaan auto tietokannasta
-        const car = await Car.findByPk(id);
-        if (!car) return res.status(404).json({ error: 'Autoa ei löytynyt' });
-
-        // Tarkistetaan, onko käyttäjä auton omistaja
-        if (car.sellerId !== sellerId) {
-            return res.status(403).json({ error: 'Ei oikeuksia muokata tätä autoa' });
+        if (isNaN(yearNum) || isNaN(kilometersNum) || isNaN(priceNum)) {
+            return res.status(400).json({ error: "Kaikki kentät täytyy olla kelvollisia numeroita" });
         }
 
-        // Päivitetään auton tiedot
-        car.brand = brand;
-        car.model = model;
-        car.year = year;
-        car.kilometers = kilometers;
-        car.price = price;
-        car.description = description;
-        await car.save();
+        // Luo uusi auto ja lisää sellerId automaattisesti
+        const newCar = await Car.create({
+            brand,
+            model,
+            year: yearNum,
+            kilometers: kilometersNum,
+            price: priceNum,
+            description,
+            sellerId
+        });
 
-        res.json({ message: 'Auton tiedot päivitetty', car });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.delete('/cars/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { sellerId } = req.body; // Saadaan käyttäjän ID pyynnöstä
-
-        // Haetaan auto tietokannasta
-        const car = await Car.findByPk(id);
-        if (!car) return res.status(404).json({ error: 'Autoa ei löytynyt' });
-
-        // Tarkistetaan, onko käyttäjä auton myyjä
-        if (car.sellerId !== sellerId) {
-            return res.status(403).json({ error: 'Ei oikeuksia poistaa tätä autoa' });
-        }
-
-        // Poistetaan auto
-        await car.destroy();
-        res.json({ message: 'Auto poistettu', id });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.json(newCar);
+    } catch (error) {
+        console.error("Virhe auton lisäyksessä:", error);
+        res.status(500).json({ error: "Virhe auton lisäyksessä" });
     }
 });
 

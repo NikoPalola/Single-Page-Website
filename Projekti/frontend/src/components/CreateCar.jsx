@@ -12,16 +12,26 @@ function CreateCar({ onCarAdded, buttonClass }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const sellerId = localStorage.getItem("userId"); //  automaattinen haku
-    if (!sellerId) {
-      setMessage("Virhe: kirjautumattomalle käyttäjälle ei voi lisätä autoa.");
+    const token = localStorage.getItem("token");  // Oletetaan, että token on tallennettu localStorageen
+    if (!token) {
+      setMessage("Virhe: et ole kirjautunut sisään.");
       return;
     }
 
     const response = await fetch("http://localhost:3000/cars", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brand, model, year, kilometers, price, sellerId }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`  // Lähetetään JWT-tunnus
+      },
+      body: JSON.stringify({
+        brand,
+        model,
+        year,
+        kilometers,
+        price,
+        description: "",  // Voit halutessasi lisätä kentän kuvausta varten
+      }),
     });
 
     if (response.ok) {
@@ -33,7 +43,8 @@ function CreateCar({ onCarAdded, buttonClass }) {
       setPrice("");
       setMessage("Auto lisätty onnistuneesti!");
     } else {
-      setMessage("Virhe lisättäessä autoa.");
+      const data = await response.json();
+      setMessage(data.error || "Virhe lisättäessä autoa.");
     }
   };
 

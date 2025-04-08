@@ -26,7 +26,6 @@ function App() {
           <Link className="nav-link text-light" to="/cars">Myytävänä olevat autot</Link>
           <Link className="nav-link text-light" to="/create-car">Myy autosi</Link>
            <Link className="nav-link text-light" to="/update-car">Muokkaa myynti-ilmoitustasi</Link>
-           <Link className="nav-link text-light" to="/create-user">Luo käyttäjä</Link>
            <Link className="nav-link text-light" to="/update-user">Päivitä käyttäjä</Link>
            <Link className="nav-link text-light" to="/login">Kirjaudu</Link>
           </nav>
