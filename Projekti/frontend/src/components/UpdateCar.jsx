@@ -1,149 +1,147 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import '../index.css';
 
-// Auton tietojen päivittäminen ja poistaminen
 function UpdateCar({ onCarUpdated, buttonClass }) {
-  const [id, setId] = useState("");
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
-  const [kilometers, setKilometers] = useState("");
-  const [price, setPrice] = useState("");
-  const [sellerId, setSellerId] = useState("");
+  const [token, setToken] = useState(null);
+  const [cars, setCars] = useState([]);
+  const [selectedCar, setSelectedCar] = useState(null);
   const [message, setMessage] = useState("");
 
-  // Hakee auton tiedot myynti-ID:n perusteella
-  const fetchCarDetails = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/cars/${id}`);
-      if (!response.ok) {
-        setMessage("Autoa ei löytynyt!");
-        return;
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    console.log("Token: ", storedToken);
+    setToken(storedToken);
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchUserCars = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/cars/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCars(response.data);
+      } catch (error) {
+        console.error("AxiosError", error);
+        setMessage("Virhe haettaessa autoja.");
       }
-      const car = await response.json();
-      setBrand(car.brand);
-      setModel(car.model);
-      setYear(car.year);
-      setKilometers(car.kilometers);
-      setPrice(car.price);
-      setSellerId(car.sellerId);
-      setMessage("");
-    } catch (error) {
-      setMessage("Virhe haettaessa tietoja.");
-    }
+    };
+
+    fetchUserCars();
+  }, [token]);
+
+  // Auton tietojen valinta
+  const handleSelectCar = (car) => {
+    setSelectedCar(car);
+    setMessage(""); // Poista mahdollinen aikaisempi virheilmoitus
   };
 
-  // Päivittää auton tiedot
+  // Päivitä auto
   const handleUpdate = async () => {
+    if (!selectedCar) {
+      setMessage("Valitse auto ensin.");
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:3000/cars/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brand, model, year, kilometers, price, sellerId }),
+      const response = await axios.put(`http://localhost:3000/cars/${selectedCar.id}`, selectedCar, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
-      if (response.ok) {
-        setMessage("Auton tiedot päivitetty!");
-        onCarUpdated();
-      } else {
-        setMessage("Päivitys epäonnistui.");
-      }
+      setMessage("Auton tiedot päivitetty!");
+      onCarUpdated(response.data); // Päivitä auto komponentissa
     } catch (error) {
-      setMessage("Virhe päivitettäessä tietoja.");
+      setMessage(error.response?.data?.error || "Päivitys epäonnistui.");
+      console.error(error);
     }
   };
 
-  // Poistaa auton myynnistä
+  // Poista auto
   const handleDelete = async () => {
+    if (!selectedCar) {
+      setMessage("Valitse auto ensin.");
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:3000/cars/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sellerId }),
+      const response = await axios.delete(`http://localhost:3000/cars/${selectedCar.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
-      if (response.ok) {
-        setMessage("Auto poistettu myynnistä!");
-        setId("");
-        setBrand("");
-        setModel("");
-        setYear("");
-        setKilometers("");
-        setPrice("");
-        setSellerId("");
-        onCarUpdated();
-      } else {
-        setMessage("Poisto epäonnistui.");
-      }
+      setMessage("Auto poistettu myynnistä!");
+      setSelectedCar(null); // Tyhjennä valittu auto
+      fetchUserCars(); // Päivitä lista
     } catch (error) {
-      setMessage("Virhe poistaessa autoa.");
+      setMessage(error.response?.data?.error || "Poisto epäonnistui.");
+      console.error(error);
     }
   };
 
   return (
     <div>
-      <h2>Päivitä tai poista auto</h2>
-      <input
-        type="number"
-        placeholder="Myynti ID"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <button onClick={fetchCarDetails} className="btn btn-info mb-3">Hae tiedot</button>
+      <h2>Päivitä tai poista oma auto</h2>
+      
+      <select onChange={(e) => handleSelectCar(cars.find(car => car.id === Number(e.target.value)))} className="form-control mb-3">
+        <option value="">Valitse auto</option>
+        {cars.map((car) => (
+          <option key={car.id} value={car.id}>
+            {car.brand} {car.model} ({car.year})
+          </option>
+        ))}
+      </select>
 
-      <input
-        type="text"
-        placeholder="Merkki"
-        value={brand}
-        onChange={(e) => setBrand(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <input
-        type="text"
-        placeholder="Malli"
-        value={model}
-        onChange={(e) => setModel(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Vuosimalli"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Kilometrit"
-        value={kilometers}
-        onChange={(e) => setKilometers(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Hinta (€)"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        className="form-control mb-2"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Myyjän ID"
-        value={sellerId}
-        onChange={(e) => setSellerId(e.target.value)}
-        className="form-control mb-3"
-        required
-      />
+      {selectedCar && (
+        <div>
+          <input
+            type="text"
+            value={selectedCar.brand}
+            onChange={(e) => setSelectedCar({ ...selectedCar, brand: e.target.value })}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="text"
+            value={selectedCar.model}
+            onChange={(e) => setSelectedCar({ ...selectedCar, model: e.target.value })}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="number"
+            value={selectedCar.year}
+            onChange={(e) => setSelectedCar({ ...selectedCar, year: e.target.value })}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="number"
+            value={selectedCar.kilometers}
+            onChange={(e) => setSelectedCar({ ...selectedCar, kilometers: e.target.value })}
+            className="form-control mb-2"
+            required
+          />
+          <input
+            type="number"
+            value={selectedCar.price}
+            onChange={(e) => setSelectedCar({ ...selectedCar, price: e.target.value })}
+            className="form-control mb-2"
+            required
+          />
 
-      <button onClick={handleUpdate} className={`${buttonClass} me-2`}>Päivitä</button>
-      <button onClick={handleDelete} className="btn btn-danger">Poista myynnistä</button>
+          <button onClick={handleUpdate} className={`${buttonClass} me-2`}>Päivitä</button>
+          <button onClick={handleDelete} className="btn btn-danger">Poista myynnistä</button>
+        </div>
+      )}
 
       {message && <p className="mt-3">{message}</p>}
     </div>

@@ -51,22 +51,27 @@ export default function LoginRegister({ onLoginSuccess }) {
         username: userName,
         password,
       });
-
+  
+      //  Tallenna token käyttöä varten!
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("username", userName);
+  
       setIsLoggedIn(true);
       setLoggedUser(userName);
       setMessage("Tervetuloa, " + userName + "!");
-      setActiveTab(""); // Sulkee kirjautumis-/rekisteröintilomakkeen
+      setActiveTab(""); // Piilota lomake
+  
       if (onLoginSuccess) onLoginSuccess(response.data.userId);
     } catch (error) {
       setMessage("Kirjautuminen epäonnistui: " + (error.response?.data?.error || error.message));
     }
   };
-
+  
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     setLoggedUser("");
     setUserName("");

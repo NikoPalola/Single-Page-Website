@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import '../index.css';
 
@@ -8,6 +8,32 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
 
+    useEffect(() => {
+        
+        const userId = localStorage.getItem("userId");
+        console.log("User ID from localStorage:", userId);
+        if (!userId) {
+            console.error("User ID ei löydy!");
+            setMessage("Ei löydy käyttäjää, ole hyvä ja kirjaudu sisään.");
+            return;
+
+    }
+        setId(userId);
+
+
+        axios.get(`http://localhost:3000/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        }).then(res => {
+            setName(res.data.name);
+            setEmail(res.data.email);
+        }).catch(err => {
+            setMessage("Virhe haettaessa käyttäjän tietoja.");
+        });
+    
+    }, []);
+
     const handleUpdate = async (event) => {
         event.preventDefault();
         setMessage("");
@@ -16,14 +42,15 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
             const response = await axios.put(`http://localhost:3000/users/${id}`, {
                 name,
                 email,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
             });
-            setMessage("User updated successfully: " + response.data.id);
-            setId("");
-            setName("");
-            setEmail("");
-            if (onUserUpdated) onUserUpdated(); // Kutsutaan päivitysfunktiota
+            setMessage("Käyttäjä päivitetty onnistuneesti: " + response.data.id);
+            if (onUserUpdated) onUserUpdated();
         } catch (error) {
-            setMessage("Error: " + (error.response?.data?.error || error.message));
+            setMessage("Virhe: " + (error.response?.data?.error || error.message));
         }
     };
 
@@ -32,16 +59,16 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
         if (!confirmed) return;
 
         try {
-            const userId = localStorage.getItem("userId");
-
-            const response = await fetch(`http://localhost:3000/users/${userId}`, {
-                method: "DELETE",
+            const response = await axios.delete(`http://localhost:3000/users/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
             });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 setMessage("Käyttäjä poistettu.");
-                localStorage.removeItem("userId"); // kirjataan ulos
-                // esim. ohjataan etusivulle tai login-sivulle
+                localStorage.removeItem("userId");
+                localStorage.removeItem("token");
                 window.location.href = "/login";
             } else {
                 setMessage("Poistaminen epäonnistui.");
@@ -51,19 +78,10 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
         }
     };
 
-
     return (
         <div className="update-user-container">
             <h2>Käyttäjätietojen päivitys</h2>
             <form onSubmit={handleUpdate} className="update-user-form">
-                <input
-                    type="text"
-                    placeholder="Käyttäjänimi"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
-                    required
-                    className="input-field"
-                />
                 <input
                     type="text"
                     placeholder="Nimi"
@@ -81,10 +99,9 @@ export default function UpdateUser({ onUserUpdated, buttonClass = "btn btn-warni
                     className="input-field"
                 />
                 <button type="submit" className={buttonClass}>Päivitä</button>
-                <button onClick={handleDelete} className="btn btn-danger mt-3">
+                <button onClick={handleDelete} type="button" className="btn btn-danger mt-3">
                     Poista käyttäjätili
                 </button>
-
             </form>
             {message && <p className="message">{message}</p>}
         </div>
