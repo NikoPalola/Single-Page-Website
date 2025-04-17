@@ -2,9 +2,13 @@
 Tässä dokumentissä on sovelluksen perurakenne ja päätoiminnot.
 ## 1. Ympäristö
 Ympäristö on toteutettu paikallisesti.
+
 Palvelin käynnistyy osoitteessa: http://localhost:3000 ja vite http://localhost:5173
+
 Frontend ja backend toimivat omissa kansioissaan.
+
 Tietokantana käytetään tiedostopohjaista SQLite-tietokantaa (Tietokanta.db).
+
 ## 2. Taustajärjestelmä
 
 Teknologia: Node.js + Express
@@ -30,8 +34,11 @@ Tietokantana on SQLite, ORM:na käytössä Sequelize.
 Tallennettavat tiedot: Käyttäjät: id, name, email, username, password ja Autot: id, brand, model, year, kilometers, price, description, sellerId
 
 Käyttäjällä voi olla useita autoja (1:N suhde). Auto liittyy yhteen käyttäjään (myyjä)
+
 Esimerkkejä kyselyistä:
+
 User.findByPk()
+
 Car.findAll({ where: { sellerId } })
 
 ## 5. Perusrunko ja arkkitehtuuri
@@ -50,9 +57,12 @@ REST API käyttäjille ja autoille
 
 JWT-tunnistus middlewarella
 
-ORM: Sequelize SQLite-tietokantaan
+ORM: Sequelize SQLite-tietokanta
+
 Komponenttiesimerkkejä:
+
 Login.jsx: Kirjautumistoiminnallisuus
+
 UpdateCar.jsx: Auton tietojen muokkaus
 
 ## 6. Toiminnot
@@ -78,6 +88,7 @@ Frontend: komponentit ja näkymät.
 Backend: reitit, mallit ja middleware.
 
 Koodi on luettavaa ja kommentoitu keskeisiltä osilta.
+
 Dokumentaatio kattaa projektin rakenteen ja toiminnot (tämä dokumentti)
 
 Tämä dokumentti kattaa projektin rakenteen ja toiminnot.
