@@ -1,6 +1,11 @@
 # Projekti vaihe 2 - Perusrakenne ja päätoiminnot
+
 Tässä dokumentissä on sovelluksen perurakenne ja päätoiminnot.
+
+Projekti välilehdeltä löytyy backend, frontend yms. tiedostot.
+
 ## 1. Ympäristö
+
 Ympäristö on toteutettu paikallisesti.
 
 Palvelin käynnistyy osoitteessa: http://localhost:3000 ja vite http://localhost:5173
