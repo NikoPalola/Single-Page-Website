@@ -33,7 +33,7 @@ Tietokantana on SQLite, ORM:na käytössä Sequelize.
 
 Tallennettavat tiedot: Käyttäjät: id, name, email, username, password ja Autot: id, brand, model, year, kilometers, price, description, sellerId
 
-Käyttäjällä voi olla useita autoja (1:N suhde). Auto liittyy yhteen käyttäjään (myyjä)
+Käyttäjällä voi olla useita autoja listattuna myyntiin. Auto liittyy yhteen käyttäjään (myyjä)
 
 Esimerkkejä kyselyistä:
 
