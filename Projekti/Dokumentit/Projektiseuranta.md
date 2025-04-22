@@ -10,3 +10,4 @@
 | 9.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen ongelmien korjaus ja testaamista. |
 | 9.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen ongelmien korjaus ja testaamista. |
 | 12.4.2025 | 1 |  Testaaminen ja dokumentointia |  Toiminnallisuuksien testaaminen ja dokumentin täyttäminen. |
+| 22.4.2025 | 1 |  Esityksen tekeminen |  Esityksen teko |
