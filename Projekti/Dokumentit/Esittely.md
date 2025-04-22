@@ -4,28 +4,50 @@
 
 ## Projektin yleiskatsaus
 
-_Briefly describe the project’s purpose, its target users, and its context._
+Projektin tarkoitus oli tehdä helpot käyttäjäkohtaiset auton osto ja myynti sivusto.
 
----
+Se on käyttäjille jotka haluavat ostaa tai myydä auton.
 
-## 📌 Use case summary
+## Käyttötapaus summaus
 
-_Link to the use cases defined in Phase 1._
-
-| Use Case | Implemented (Yes/No) | Demonstration / Notes |
+| Käyttötapaus | Toteutuiko (kyllä/ei) | demonstrointi / huomiot |
 |----------|----------------------|------------------------|
-| Example: User logs in and makes a reservation | Yes | Implemented using secure session handling. Demo at 2:45 in the video. |
-| Example: Admin deletes resources | No | Not prioritized, possible future work. |
+| Ostaja selaa valitsemansa automallien hintoja ja tietoja. | Kyllä | Ostaja voi selata myynnissä olevien autojen tietoja, mutta suodatus toimintoa ei ole tehty, jotta voisi hakea tiettyä automallia |
+| Ostaja etsii myynnissä olevia autoja hakukriteerien perusteella | ei | Tähän en ehtinyt perehtyä, mutta hyvä jatkokehitysidea |
+| Myyjä listaa uuden auton myyntiin lisäämällä kuvia ja tietoja | kyllä ja ei | Myyjä voi laittaa autoja myyntiin perustiedoin mutta kuvien lisääminen ei onnistu. |
+| Ostaja voi tallentaa haluamansa automallinsa suosikkeihin. | ei | Tätä ominaisuutta en pitänyt tärkeänä tässä vaiheessa. |
 
 _Add explanations for each use case, including demo timestamps if using video._
 
 ---
 
-## ✍️ Technical implementation
+## Tekninen totetus
 
-_Describe technologies used, architectural decisions, and how key features were implemented._
+Frontend (Käyttöliittymä):
 
----
+React – komponenttipohjainen SPA (Single Page Application)
+
+Axios – HTTP-pyyntöjen tekemiseen backendille
+
+localStorage – kirjautumistiedon säilyttämiseen selaimessa
+
+React Hooks (useState, useEffect) – tilan ja sivuvaikutusten hallintaan
+
+Backend (Palvelin):
+
+Node.js + Express – kevyt ja nopea HTTP-palvelin
+
+JWT (jsonwebtoken) – käyttäjän tunnistautuminen ja pääsynhallinta
+
+bcryptjs – salasanojen hajauttamiseen (hashaus)
+
+Sequelize ORM – tietokantaoperaatioiden hoitamiseen
+
+CORS & Express Middleware – rajapintojen suojaus ja pyyntöjen käsittely
+
+Tietokanta:
+
+SQLite – kevyt ja tiedostopohjainen relaatiotietokanta
 
 ## 🚂 Development process
 
