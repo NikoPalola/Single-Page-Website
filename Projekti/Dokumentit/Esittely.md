@@ -49,31 +49,82 @@ Tietokanta:
 
 SQLite – kevyt ja tiedostopohjainen relaatiotietokanta
 
-## 🚂 Development process
+## Kehitys prosessi
 
-_Summarize your progress from start to finish, mentioning key decisions or changes along the way._
+### Vaihe 1: Suunnittelu ja perusympäristön rakentaminen
 
----
+Päätin käyttää Node.js + Express backendissä, koska siitä on tullut kohtalaisen tuttu tässä kurssissa.
 
-## ☀️ Reflection and future work
+Frontend toteutettiin Reactilla, josta myös on kokemusta tullut kurssin myötä.
 
-_What worked well? What challenges did you face? What would you add or improve in the future?_
+Tietokantana valitsin SQLite:n, koska se on kevyt ja helposti otettavissa käyttöön paikallisessa kehitysympäristössä. Ja lisäksi sitäkin tullut käytettyä.
 
----
+### Vaihe 2: CRUD-toiminnot autoille
 
-## 📊 Work Hours Log
+Tein toiminnallisuudet autojen luomiseen, muokkaamiseen ja poistamiseen.
 
-_You can copy from the logbook here._
+Tein erilliset reitit, jotka palauttavat joko kaikki autot tai vain kirjautuneen käyttäjän omat autot.
 
-| Date       | Time | Task                                |
-|------------|------|-------------------------------------|
-| 2.4.2025   | 3h   | Defined use cases                   |
-| 4.4.2025   | 2h   | Built login form                    |
-| ...        | ...  | ...                                 |
-| **Total**  | **63h** |                                 |
+Kaikki toiminnot suojattiin niin, että käyttäjä voi hallita vain omia ilmoituksiaan.
 
----
+### Vaihe 3: Frontendin rakentaminen
 
-## 🪢 Presentation link
+Kehitin lomakekomponentit kirjautumiseen, rekisteröintiin, tietojen päivittämiseen ja ilmoituksen lisäämiseen.
+
+Toteutin tilanhallinnan useState- ja useEffect-hookeilla.
+
+Käytin axios-kirjastoa yhteyksiin backendin kanssa.
+
+### Vaihe 4: Autentikointi ja käyttäjähallinta
+
+Toteutin käyttäjän rekisteröinnin ja kirjautumisen JWT-tokenin avulla.
+
+Salasanat suojattiin bcrypt-kirjastolla hashauksen avulla.
+
+Tein JWT-tarkistuksen middlewarella, jolla varmistetaan, että vain kirjautunut käyttäjä voi suorittaa tiettyjä toimintoja (kuten auton lisääminen tai muokkaaminen).
+
+Tässä vaiheessa käytin tekoälyä, jotta sain toimimaan käyttäjä tunnistautumisen.
+
+### Vaihe 5: Testaus ja hienosäätö
+
+Testasin eri käyttötapauksia: kirjautuminen, virheelliset salasanat, tokenin vanheneminen jne.
+
+Tarkistin, että käyttöliittymä reagoi oikein eri tilanteisiin.
+
+Paransin virheilmoituksia ja lisäsin tarkistuksia.
+
+### Vaihe 6: Dokumentointi ja viimeistely
+
+Koodien tarkistaminen sekä tarkistaa että koodin pääosat on kommentoitu.
+
+Työtuntien kirjanpito, minkä verrarn mennyt aikaa mihinkin työhön.
+
+Projektin valmistelu esitystä varten
+
+## Pohdinta ja tulevaisuuden parannukset
+
+Projektissa toimii hyvin perus asiat jotka mahdollistavat sivun idean. 
+
+Käyttätilin teko, kirjautuminen, auton myyntiin laittaminen, auton tietojen muokkaus ja poistaminen sekä käyttäjätili tietojen muokkaus tai poistaminen. 
+
+Tulevaisuudessa olisi hyvä, että autoja voisi suodattaa mallikohtaisesti ja auton myynti-ilmoituksiin kuvien lisäämisen mahdollisuus.
+
+## Tuntikirjanpito
+
+| Päivämäärä  | Tunteja käytetty | Aihe | Tehdyt työt |  
+| :---  |     :---:      |     :---:      |     :---:      |
+| 2.4.2025 | 2 |  Sovelluksen aloitus |  backendin,frontendin ja tietokannan perustamista |
+| 4.4.2025 | 3 |  Sovelluksen jatkaminen |  backendin,frontendin ja tyylien teko. Sekä yritys saada pilviympäristö käyttöön, mutta huonolla menestyksellä. |
+| 4.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen kehitys, käyttöliittymä, tietokannan kehitys ja ominaisuuksien lisääminen ja parantelu. |
+| 7.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen toiminnallisuuksien ja kirjautumisen tekoa. |
+| 8.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen käyttäjä ongelmien korjaamista. |
+| 7.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen toiminnallisuuksien ja kirjautumisen tekoa ja testaamista. |
+| 8.4.2025 | 2 |  Sovelluksen jatkaminen |  Sovelluksen käyttäjä ongelmien korjaamista ja testaamista. |
+| 9.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen ongelmien korjaus ja testaamista. |
+| 9.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen ongelmien korjaus ja testaamista. |
+| 12.4.2025 | 1 |  Testaaminen ja dokumentointia |  Toiminnallisuuksien testaaminen ja dokumentin täyttäminen. |
+| 22.4.2025 | 1 |  Esityksen tekeminen |  Esityksen teko |
+
+## Esityksen linkki
 
 _Add a link to your video presentation or state that it was presented live._
