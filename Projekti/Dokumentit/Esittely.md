@@ -12,7 +12,7 @@ Se on käyttäjille jotka haluavat ostaa tai myydä auton.
 
 | Käyttötapaus | Toteutuiko (kyllä/ei) | demonstrointi / huomiot |
 |----------|----------------------|------------------------|
-| Ostaja selaa valitsemansa automallien hintoja ja tietoja. | Kyllä | Ostaja voi selata myynnissä olevien autojen tietoja, mutta suodatus toimintoa ei ole tehty, jotta voisi hakea tiettyä automallia |
+| Ostaja selaa valitsemansa automallien hintoja ja tietoja. | Kyllä ja ei | Ostaja voi selata myynnissä olevien autojen tietoja, mutta suodatus toimintoa ei ole tehty, jotta voisi hakea tiettyä automallia |
 | Ostaja etsii myynnissä olevia autoja hakukriteerien perusteella | ei | Tähän en ehtinyt perehtyä, mutta hyvä jatkokehitysidea |
 | Myyjä listaa uuden auton myyntiin lisäämällä kuvia ja tietoja | kyllä ja ei | Myyjä voi laittaa autoja myyntiin perustiedoin mutta kuvien lisääminen ei onnistu. |
 | Ostaja voi tallentaa haluamansa automallinsa suosikkeihin. | ei | Tätä ominaisuutta en pitänyt tärkeänä tässä vaiheessa. |
