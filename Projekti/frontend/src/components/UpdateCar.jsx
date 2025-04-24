@@ -1,20 +1,24 @@
+// Tuodaan tarvittavat hookit ja kirjastot
 import { useState, useEffect } from "react";
 import axios from "axios";
 import '../index.css';
 
+// Komponentti, joka mahdollistaa auton tietojen päivittämisen tai poistamisen
 function UpdateCar({ onCarUpdated, buttonClass }) {
+  // Tilamuuttujat: token, autojen lista, valittu auto ja viestit
   const [token, setToken] = useState(null);
   const [cars, setCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
   const [message, setMessage] = useState("");
 
+  // Haetaan token localStoragesta, kun komponentti renderöityy
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     console.log("Token: ", storedToken);
     setToken(storedToken);
   }, []);
 
-  // Haetaan autot käyttäjältä
+  // Funktio, joka hakee käyttäjän autot palvelimelta
   const fetchUserCars = async () => {
     if (!token) return;
 
@@ -31,17 +35,18 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
     }
   };
 
+  // Kun token on saatu, haetaan autot
   useEffect(() => {
     fetchUserCars();
   }, [token]);
 
-  // Auton tietojen valinta
+  // Käyttäjän valitsema auto tallennetaan tilaan
   const handleSelectCar = (car) => {
     setSelectedCar(car);
-    setMessage(""); // Poista mahdollinen aikaisempi virheilmoitus
+    setMessage(""); // Tyhjennetään mahdollinen virheilmoitus
   };
 
-  // Päivitä auto
+  // Päivitetään valitun auton tiedot palvelimelle
   const handleUpdate = async () => {
     if (!selectedCar) {
       setMessage("Valitse auto ensin.");
@@ -57,14 +62,14 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
       });
 
       setMessage("Auton tiedot päivitetty!");
-      onCarUpdated(response.data); // Päivitä auto komponentissa
+      onCarUpdated(response.data); // Ilmoitetaan parent-komponentille päivityksestä
     } catch (error) {
       setMessage(error.response?.data?.error || "Päivitys epäonnistui.");
       console.error(error);
     }
   };
 
-  // Poista auto
+  // Poistetaan auto palvelimelta
   const handleDelete = async () => {
     if (!selectedCar) {
       setMessage("Valitse auto ensin.");
@@ -80,8 +85,8 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
       });
 
       setMessage("Auto poistettu myynnistä!");
-      setSelectedCar(null); // Tyhjennä valittu auto
-      fetchUserCars(); // Päivitä lista
+      setSelectedCar(null); // Tyhjennetään valinta
+      fetchUserCars(); // Haetaan autot uudelleen, jotta lista päivittyy
     } catch (error) {
       setMessage(error.response?.data?.error || "Poisto epäonnistui.");
       console.error(error);
@@ -92,6 +97,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
     <div>
       <h2>Päivitä tai poista oma auto</h2>
       
+      {/* Auton valinta dropdown */}
       <select onChange={(e) => handleSelectCar(cars.find(car => car.id === Number(e.target.value)))} className="form-control mb-3">
         <option value="">Valitse auto</option>
         {cars.map((car) => (
@@ -101,6 +107,7 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
         ))}
       </select>
 
+      {/* Näytetään kentät, jos auto on valittu */}
       {selectedCar && (
         <div>
           <input
@@ -139,11 +146,13 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
             required
           />
 
+          {/* Toimintapainikkeet */}
           <button onClick={handleUpdate} className={`${buttonClass} me-2`}>Päivitä</button>
           <button onClick={handleDelete} className="btn btn-danger">Poista myynnistä</button>
         </div>
       )}
 
+      {/* Viestit käyttäjälle */}
       {message && <p className="mt-3">{message}</p>}
     </div>
   );
