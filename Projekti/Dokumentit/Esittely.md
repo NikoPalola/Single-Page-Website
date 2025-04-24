@@ -17,10 +17,6 @@ Se on käyttäjille jotka haluavat ostaa tai myydä auton.
 | Myyjä listaa uuden auton myyntiin lisäämällä kuvia ja tietoja | kyllä ja ei | Myyjä voi laittaa autoja myyntiin perustiedoin mutta kuvien lisääminen ei onnistu. |
 | Ostaja voi tallentaa haluamansa automallinsa suosikkeihin. | ei | Tätä ominaisuutta en pitänyt tärkeänä tässä vaiheessa. |
 
-_Add explanations for each use case, including demo timestamps if using video._
-
----
-
 ## Tekninen totetus
 
 Frontend (Käyttöliittymä):
@@ -124,7 +120,8 @@ Tulevaisuudessa olisi hyvä, että autoja voisi suodattaa mallikohtaisesti ja au
 | 9.4.2025 | 3 |  Sovelluksen jatkaminen |  Sovelluksen ongelmien korjaus ja testaamista. |
 | 12.4.2025 | 1 |  Testaaminen ja dokumentointia |  Toiminnallisuuksien testaaminen ja dokumentin täyttäminen. |
 | 22.4.2025 | 1 |  Esityksen tekeminen |  Esityksen teko |
+| 24.4.2025 | 1 |  Esityksen tekeminen |  Tallenteen teko ja loppuraportin viimeistely |
 
 ## Esityksen linkki
 
-_Add a link to your video presentation or state that it was presented live._
+https://centriafi-my.sharepoint.com/:v:/r/personal/niko_palola_centria_fi/Documents/Tallenteet/Tapaaminen%20j%C3%A4rjest%C3%A4j%C3%A4n%20Niko%20Palola%20ATIS23Y%20kanssa-20250424_204925-Kokouksen%20tallenne.mp4?csf=1&web=1&e=mTacef&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
