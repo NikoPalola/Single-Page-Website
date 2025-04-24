@@ -24,25 +24,34 @@ export default function LoginRegister({ onLoginSuccess }) {
   }, []);
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    try {
-      const response = await axios.post("http://localhost:3000/users", {
-        name,
-        email,
-        username: userName,
-        password,
-      });
-      setMessage("Käyttäjä luotu: " + response.data.name);
-      setUserName("");
-      setPassword("");
-      setName("");
-      setEmail("");
-    } catch (error) {
-      setMessage("Rekisteröinti epäonnistui: " + (error.response?.data?.error || error.message));
-    }
-  };
+  e.preventDefault();
+  setMessage("");
+  try {
+    const response = await axios.post("http://localhost:3000/users", {
+      name,
+      email,
+      username: userName,
+      password,
+    });
 
+    // Jos backend palauttaa tokenin ja userId:n, tallenna ne!
+    if (response.data.token && response.data.userId) {
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("username", userName);
+      setIsLoggedIn(true);
+      setLoggedUser(userName);
+    }
+
+    setMessage("Käyttäjä luotu: " + response.data.name);
+    setUserName("");
+    setPassword("");
+    setName("");
+    setEmail("");
+  } catch (error) {
+    setMessage("Rekisteröinti epäonnistui: " + (error.response?.data?.error || error.message));
+  }
+};
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");

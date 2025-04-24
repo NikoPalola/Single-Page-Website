@@ -43,32 +43,79 @@ sequelize.sync()
   .then(() => console.log("Tietokanta synkronoitu"))
   .catch(err => console.error("Synkronointivirhe:", err));
 
-// Kirjautuminen
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-  
-    try {
-      const user = await User.findOne({ where: { username } });
-      if (!user) return res.status(401).json({ error: 'Käyttäjää ei löytynyt' });
-  
-      const valid = await bcrypt.compare(password, user.password);
-      if (!valid) return res.status(401).json({ error: 'Virheellinen salasana' });
-  
-      const token = jwt.sign(
-        { id: user.id, username: user.username },
-        'salainenavain',
-        { expiresIn: '1h' }
-      );
-  
-      // Palauta myös userId
-      res.json({ 
-        token,
-        userId: user.id 
-      });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+// Käyttäjän rekisteröinti
+app.post('/users', async (req, res) => {
+  const { name, email, username, password } = req.body;
+
+  if (!name || !email || !username || !password) {
+    return res.status(400).json({ error: 'Kaikki kentät ovat pakollisia' });
+  }
+
+  try {
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Käyttäjänimi on jo käytössä' });
     }
-  });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      name,
+      email,
+      username,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      username: newUser.username
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Virhe käyttäjää luodessa' });
+  }
+});
+
+// Käyttäjän kirjautuminen
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: "Käyttäjänimi ja salasana vaaditaan" });
+  }
+
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(401).json({ error: "Väärä käyttäjänimi tai salasana" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Väärä käyttäjänimi tai salasana" });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      'salainenavain',
+      { expiresIn: '2h' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Virhe kirjautumisessa" });
+  }
+});
   
 
 // JWT tarkistus

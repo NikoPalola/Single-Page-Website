@@ -14,23 +14,24 @@ function UpdateCar({ onCarUpdated, buttonClass }) {
     setToken(storedToken);
   }, []);
 
-  useEffect(() => {
+  // Haetaan autot käyttäjältä
+  const fetchUserCars = async () => {
     if (!token) return;
 
-    const fetchUserCars = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/cars/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCars(response.data);
-      } catch (error) {
-        console.error("AxiosError", error);
-        setMessage("Virhe haettaessa autoja.");
-      }
-    };
+    try {
+      const response = await axios.get("http://localhost:3000/cars/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCars(response.data);
+    } catch (error) {
+      console.error("AxiosError", error);
+      setMessage("Virhe haettaessa autoja.");
+    }
+  };
 
+  useEffect(() => {
     fetchUserCars();
   }, [token]);
 
