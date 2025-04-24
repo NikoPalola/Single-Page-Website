@@ -1,20 +1,27 @@
+// Tuodaan Reactin hookit ja axios HTTP-pyyntöihin
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../index.css";
 
+// LoginRegister-komponentti ottaa vastaan propsin `onLoginSuccess`
 export default function LoginRegister({ onLoginSuccess }) {
+  // Hallitaan aktiivista välilehteä (login tai register)
   const [activeTab, setActiveTab] = useState("login");
 
+  // Tilamuuttujat käyttäjän tunnistautumista varten
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
+  // Tilamuuttujat rekisteröintiin
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [message, setMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedUser, setLoggedUser] = useState("");
+  // Muut tilamuuttujat
+  const [message, setMessage] = useState(""); // Näytettävä viesti
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Onko käyttäjä kirjautunut
+  const [loggedUser, setLoggedUser] = useState(""); // Kirjautuneen käyttäjän nimi
 
+  // Tarkista onko käyttäjä jo kirjautunut (esim. sivun latauksen yhteydessä)
   useEffect(() => {
     const storedUser = localStorage.getItem("username");
     if (storedUser) {
@@ -23,35 +30,40 @@ export default function LoginRegister({ onLoginSuccess }) {
     }
   }, []);
 
+  // Käyttäjän rekisteröinti
   const handleRegister = async (e) => {
-  e.preventDefault();
-  setMessage("");
-  try {
-    const response = await axios.post("http://localhost:3000/users", {
-      name,
-      email,
-      username: userName,
-      password,
-    });
+    e.preventDefault();
+    setMessage("");
+    try {
+      const response = await axios.post("http://localhost:3000/users", {
+        name,
+        email,
+        username: userName,
+        password,
+      });
 
-    // Jos backend palauttaa tokenin ja userId:n, tallenna ne!
-    if (response.data.token && response.data.userId) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("username", userName);
-      setIsLoggedIn(true);
-      setLoggedUser(userName);
+      // Jos rekisteröinti onnistuu ja saadaan token ja userId
+      if (response.data.token && response.data.userId) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("username", userName);
+        setIsLoggedIn(true);
+        setLoggedUser(userName);
+      }
+
+      setMessage("Käyttäjä luotu: " + response.data.name);
+
+      // Tyhjennä lomakekentät
+      setUserName("");
+      setPassword("");
+      setName("");
+      setEmail("");
+    } catch (error) {
+      setMessage("Rekisteröinti epäonnistui: " + (error.response?.data?.error || error.message));
     }
+  };
 
-    setMessage("Käyttäjä luotu: " + response.data.name);
-    setUserName("");
-    setPassword("");
-    setName("");
-    setEmail("");
-  } catch (error) {
-    setMessage("Rekisteröinti epäonnistui: " + (error.response?.data?.error || error.message));
-  }
-};
+  // Käyttäjän kirjautuminen
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -60,23 +72,24 @@ export default function LoginRegister({ onLoginSuccess }) {
         username: userName,
         password,
       });
-  
-      //  Tallenna token käyttöä varten!
+
+      // Tallenna kirjautumistiedot localStorageen
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.userId);
       localStorage.setItem("username", userName);
-  
+
       setIsLoggedIn(true);
       setLoggedUser(userName);
       setMessage("Tervetuloa, " + userName + "!");
       setActiveTab(""); // Piilota lomake
-  
+
       if (onLoginSuccess) onLoginSuccess(response.data.userId);
     } catch (error) {
       setMessage("Kirjautuminen epäonnistui: " + (error.response?.data?.error || error.message));
     }
   };
-  
+
+  // Kirjautumisen purkaminen
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
@@ -92,15 +105,14 @@ export default function LoginRegister({ onLoginSuccess }) {
   return (
     <div className="login-register-container">
       <div className="tab-buttons mb-3">
+        {/* Näytä uloskirjautumispainike, jos käyttäjä on kirjautunut */}
         {isLoggedIn ? (
-          <button
-            className="btn btn-danger"
-            onClick={handleLogout}
-          >
+          <button className="btn btn-danger" onClick={handleLogout}>
             Kirjaudu ulos ({loggedUser})
           </button>
         ) : (
           <>
+            {/* Vaihda kirjautumis- tai rekisteröitymisnäkymään */}
             <button
               className={`btn ${activeTab === "login" ? "btn-secondary" : "btn-outline-secondary"} me-2`}
               onClick={() => setActiveTab("login")}
@@ -117,6 +129,7 @@ export default function LoginRegister({ onLoginSuccess }) {
         )}
       </div>
 
+      {/* Kirjautumislomake */}
       {!isLoggedIn && activeTab === "login" && (
         <form onSubmit={handleLogin}>
           <input
@@ -137,6 +150,7 @@ export default function LoginRegister({ onLoginSuccess }) {
         </form>
       )}
 
+      {/* Rekisteröitymislomake */}
       {!isLoggedIn && activeTab === "register" && (
         <form onSubmit={handleRegister}>
           <input
@@ -171,6 +185,7 @@ export default function LoginRegister({ onLoginSuccess }) {
         </form>
       )}
 
+      {/* Viestit käyttäjälle (esim. virheilmoitukset) */}
       {message && <p className="mt-3">{message}</p>}
     </div>
   );
